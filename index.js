@@ -18,7 +18,7 @@ app.use(router);
 app.use(corse())
 server.listen(PORT, () => {console.log('server is listening ' + PORT)});
 
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./Users.js');
+const { addUser, removeUser, getUser, getUsersInRoom ,addRUser,RUserLogin} = require('./Users.js');
 
 
 /* Client Side Socket is the parameter*/
@@ -54,6 +54,23 @@ io.on('connect', (socket) => {
          
         callback();
     });
+
+    socket.on('sendRegister', (message, callback) => {
+        console.log(message)
+        
+        const { error, success } =  addRUser({name: message.user, pass:message.Password});
+     
+        callback({ error, success });
+    });
+
+    socket.on('sendLogin', (message, callback) => {
+        console.log(message)
+        
+        const { error, success } =  RUserLogin({name: message.user, pass:message.Password});
+     
+        callback({ error, success });
+    });
+
 
     socket.on("disconnect", () => {
         const user = removeUser(socket.id);
