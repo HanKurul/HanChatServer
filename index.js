@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 5000;
 const router = express.Router();
 
 router.get('', (reg,res) => {
+
     res.send('Server is Online');
 });
 
@@ -14,11 +15,12 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+const { addUser, removeUser, getUser, getUsersInRoom ,addRUser,RUserLogin} = require('./Users.js');
+
+
 app.use(router);
 app.use(corse())
 server.listen(PORT, () => {console.log('server is listening ' + PORT)});
-
-const { addUser, removeUser, getUser, getUsersInRoom ,addRUser,RUserLogin} = require('./Users.js');
 
 
 /* Client Side Socket is the parameter*/
