@@ -21,7 +21,8 @@ async function RegisterUser(req) {
   
   var reqUserName = req.UserName.trim();
   var reqPassword = req.Password.trim();
-  console.clear();
+
+  delete req.Password;  //Remove Password ==> Simple, easy , why not,
 
   if(reqUserName === "admin") return  { error: "You are not Fucking admin" };
   if(reqUserName === "administrator") return  { error: "You are not Fucking administrator" };
@@ -33,7 +34,6 @@ async function RegisterUser(req) {
   
   req.Salt = crypto.randomBytes(16).toString('hex'); 
   req.Hash = crypto.pbkdf2Sync(reqPassword, req.Salt, 1000, 64, `sha512`).toString(`hex`); 
-  req.Password = ""; // Simple, easy , why not,
   
   database.insert(req);
 
@@ -45,8 +45,7 @@ async function LoginUser(req) {
   
   var reqUserName = req.UserName.trim();
   var reqPassword = req.Password.trim();
-  console.clear();
-
+  
   doc = await findOne(database, { UserName: reqUserName});
 
   if (!doc)
