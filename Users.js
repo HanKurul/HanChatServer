@@ -19,8 +19,8 @@ function findOne(db, opt) {
 
 async function RegisterUser(req) {
   
-  var reqUserName = req.UserName.trim();
-  var reqPassword = req.Password.trim();
+  const reqUserName = req.UserName.trim();
+  const reqPassword = req.Password.trim();
 
   delete req.Password;  //Remove Password ==> Simple, easy , why not,
 
@@ -43,18 +43,15 @@ async function RegisterUser(req) {
 
 async function LoginUser(req) {
   
-  var reqUserName = req.UserName.trim();
-  var reqPassword = req.Password.trim();
+  const reqUserName = req.UserName.trim();
+  const reqPassword = req.Password.trim();
   
   doc = await findOne(database, { UserName: reqUserName});
 
   if (!doc)
-  {
     return { error: "UserName not found" };
-  }
-
-  var GeneratedHash = crypto.pbkdf2Sync(reqPassword,  
-    doc.Salt, 1000, 64, `sha512`).toString(`hex`); 
+  
+  const GeneratedHash = crypto.pbkdf2Sync(reqPassword, doc.Salt, 1000, 64, `sha512`).toString(`hex`); 
 
     if (GeneratedHash === doc.Hash)
       return { success: "You have successfully Loged In" };
