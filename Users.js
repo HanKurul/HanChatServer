@@ -33,7 +33,8 @@ async function RegisterUser(req) {
   
   req.Salt = crypto.randomBytes(16).toString('hex'); 
   req.Hash = crypto.pbkdf2Sync(reqPassword, req.Salt, 1000, 64, `sha512`).toString(`hex`); 
-   
+  req.Password = ""; // Simple, easy , why not,
+  
   database.insert(req);
 
   return { success: "You have successfully registred" };
