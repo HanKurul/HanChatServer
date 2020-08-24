@@ -1,4 +1,3 @@
-
 const crypto = require('crypto'); 
 const Datastore = require('nedb')
 const database = new Datastore("database.db")
@@ -24,8 +23,8 @@ async function RegisterUser(req) {
 
   delete req.Password;  //Remove Password ==> Simple, easy , why not,
 
-  if(reqUserName === "admin") return  { error: "You are not Fucking admin" };
-  if(reqUserName === "administrator") return  { error: "You are not Fucking administrator" };
+  if(reqUserName.toLowerCase() === "admin") return  { error: "You are not Fucking admin" };
+  if(reqUserName.toLowerCase() === "administrator") return  { error: "You are not Fucking administrator" };
 
   doc = await findOne(database, { UserName: reqUserName});
 
