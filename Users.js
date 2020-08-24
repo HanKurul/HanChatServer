@@ -1,6 +1,6 @@
 
-var crypto = require('crypto'); 
-var Datastore = require('nedb')
+const crypto = require('crypto'); 
+const Datastore = require('nedb')
 const database = new Datastore("database.db")
 database.loadDatabase();
 
