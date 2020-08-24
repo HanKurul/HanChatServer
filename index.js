@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const { addUser, removeUser, getUser, getUsersInRoom ,addRUser,RUserLogin} = require('./Users.js');
+const { RegisterUser,LoginUser} = require('./Users.js');
 
 
 app.use(router);
@@ -29,58 +29,58 @@ io.on('connect', (socket) => {
     console.log("A new Client Connected")
 
     socket.on('join', ({ name }, callback) => {
-        /* add user to the*/
-        const { error, user } = addUser({ id: socket.id, name });
+        // /* add user to the*/
+        // const { error, user } = addUser({ id: socket.id, name });
 
-        if (error) return callback(error);
+        // if (error) return callback(error);
 
-        /* We will Have 1 room */
-        socket.join("GlobalRoom");
+        // /* We will Have 1 room */
+        // socket.join("GlobalRoom");
 
-        /* Send Welcome Message To Joining User*/
-        socket.emit('message', { user: 'admin', text: `Welcome, Mr/Ms ${user.name}` });
+        // /* Send Welcome Message To Joining User*/
+        // socket.emit('message', { user: 'admin', text: `Welcome, Mr/Ms ${user.name}` });
 
-        /* Send To all User About Joining User*/
-        socket.broadcast.to("GlobalRoom").emit('message', { user: 'admin', text: `${user.name} has joined!` });
+        // /* Send To all User About Joining User*/
+        // socket.broadcast.to("GlobalRoom").emit('message', { user: 'admin', text: `${user.name} has joined!` });
 
-        /* Send Information of All Users*/
-        io.to("GlobalRoom").emit('onlineusers', { users: getUsersInRoom() });
+        // /* Send Information of All Users*/
+        // io.to("GlobalRoom").emit('onlineusers', { users: getUsersInRoom() });
 
         callback();
     });
 
     socket.on('sendMessage', (message, callback) => {
-        const user = getUser(socket.id);
+        // const user = getUser(socket.id);
   
-        io.to("GlobalRoom").emit('message', message);
+        // io.to("GlobalRoom").emit('message', message);
          
         callback();
     });
 
-    socket.on('sendRegister', (message, callback) => {
-        console.log(message)
-        
-        const { error, success } =  addRUser({name: message.user, pass:message.Password});
+    socket.on('RegisterMsg', (message, callback) => {
+       
+       RegisterUser(message).then(function({ error, success }) 
+       {
+            callback({ error, success });
+       });
      
-        callback({ error, success });
     });
 
-    socket.on('sendLogin', (message, callback) => {
-        console.log(message)
-        
-        const { error, success } =  RUserLogin({name: message.user, pass:message.Password});
-     
-        callback({ error, success });
+    socket.on('LoginMsg', (message, callback) => {
+        LoginUser(message).then(function({ error, success }) 
+        {
+             callback({ error, success });
+        });
     });
 
 
     socket.on("disconnect", () => {
-        const user = removeUser(socket.id);
+        // const user = removeUser(socket.id);
 
-        if (user) {
-            io.to("GlobalRoom").emit('message', { user: 'Admin', text: `${user.name} has left.` });
-            io.to("GlobalRoom").emit('roomData', { users: getUsersInRoom() });
-        }
+        // if (user) {
+        //     io.to("GlobalRoom").emit('message', { user: 'Admin', text: `${user.name} has left.` });
+        //     io.to("GlobalRoom").emit('roomData', { users: getUsersInRoom() });
+        // }
     })
       
 })

@@ -1,66 +1,66 @@
-const rusers = [];
-const users = [];
 
-const RUserLogin = ({ name, pass }) => {
+var crypto = require('crypto'); 
+var Datastore = require('nedb')
+const database = new Datastore("database.db")
+database.loadDatabase();
 
-  name = name.trim();
-  pass = pass.trim();
 
-  const hasuser = rusers.find((ruser) => ruser.name === name);
-  const haspassword = rusers.find((ruser) => ruser.pass === pass);
-
-  if(!name) return  { error: "Username is required" };
-  if(!pass) return  { error: "Password is required." };
-  if(!hasuser) return  {error: "Wrong Username" };
-  if(!haspassword) return  {error: "Wrong Password" };
-
-  return { success: "You have successfully Logged In" };
+function findOne(db, opt) {
+  return new Promise(function(resolve, reject) {
+    db.findOne(opt, function(err, doc) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(doc)
+      }
+    })
+  })
 }
 
-const addRUser = ({ name, pass }) => {
+async function RegisterUser(req) {
+  
+  var reqUserName = req.UserName.trim();
+  var reqPassword = req.Password.trim();
+  console.clear();
 
-  name = name.trim();
-  pass = pass.trim();
+  if(reqUserName === "admin") return  { error: "You are not Fucking admin" };
+  if(reqUserName === "administrator") return  { error: "You are not Fucking administrator" };
 
-  const existingUser = rusers.find((ruser) => ruser.name === name);
+  doc = await findOne(database, { UserName: reqUserName});
 
-  if(!name) return  { error: "Username is required" };
-  if(name.toLowerCase() == "admin") return  { error: "You are not Fucking admin" };
-  if(name.toLowerCase() == "administrator") return  { error: "You are not Fucking administrator" };
-  if(!pass) return  { error: "Password is required." };
-  if(existingUser) return  {error: "Username is taken" };
-
-  const user = {name, pass};
-
-  rusers.push(user);
+  if (doc)
+    return { error: "UserName is taken" };
+  
+  req.Salt = crypto.randomBytes(16).toString('hex'); 
+  req.Hash = crypto.pbkdf2Sync(reqPassword, req.Salt, 1000, 64, `sha512`).toString(`hex`); 
+   
+  database.insert(req);
 
   return { success: "You have successfully registred" };
 }
 
-const addUser = ({ id, name }) => {
- 
-  name = name.trim().toLowerCase();
 
-  const existingUser = users.find((user) => user.name === name);
+async function LoginUser(req) {
+  
+  var reqUserName = req.UserName.trim();
+  var reqPassword = req.Password.trim();
+  console.clear();
 
-  if(!name) return { error: 'Username are required.' };
-  if(existingUser) return { error: 'Username is taken.' };
+  doc = await findOne(database, { UserName: reqUserName});
 
-  const user = { id, name };
+  if (!doc)
+  {
+    return { error: "UserName not found" };
+  }
 
-  users.push(user);
+  var GeneratedHash = crypto.pbkdf2Sync(reqPassword,  
+    doc.Salt, 1000, 64, `sha512`).toString(`hex`); 
 
-  return { user };
+    if (GeneratedHash === doc.Hash)
+      return { success: "You have successfully Loged In" };
+   else
+     return { error: "Wrong PassWord" };
 }
 
-const removeUser = (id) => {
-  const index = users.findIndex((user) => user.id === id);
 
-  if(index !== -1) return users.splice(index, 1)[0];
-}
-
-const getUser = (id) => users.find((user) => user.id === id);
-
-const getUsersInRoom = () => users;
-
-module.exports = { addUser, removeUser, getUser, getUsersInRoom,addRUser,RUserLogin };
+module.exports = { RegisterUser,LoginUser };
