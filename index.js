@@ -23,7 +23,7 @@ app.use(corse())
 server.listen(PORT, () => {console.log('server is listening ' + PORT)});
 
 
-/* Client Side Socket is the parameter*/
+/* Client Side Socket is the parameter */
 io.on('connect', (socket) => {
     
     console.log("A new Client Connected")
@@ -67,9 +67,9 @@ io.on('connect', (socket) => {
     });
 
     socket.on('LoginMsg', (message, callback) => {
-        LoginUser(message).then(function({ error, success }) 
+        LoginUser(message).then(function({ error, success, ProfilePic }) 
         {
-             callback({ error, success });
+             callback({ error, success , ProfilePic});
         });
     });
 
