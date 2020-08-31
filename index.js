@@ -47,10 +47,10 @@ io.on("connect", (socket) => {
     callback({ data, error });
 
     /*Regires Users socked  to a room*/
-    socket.join(req.RoomId);
+    socket.join(req.RoomName);
 
     /*Inform room's occupants about newly joined users*/
-    socket.broadcast.to(req.RoomId).emit("newmessage", {
+    socket.broadcast.to(req.RoomName).emit("newmessage", {
       Sender: "admin",
       Message: `${req.UserName} has joined!`,
     });
@@ -65,7 +65,7 @@ io.on("connect", (socket) => {
     callback({ data, error });
 
     /*Send new message to room's occupants*/
-    if (req.Msg) socket.broadcast.to(req.RoomId).emit("newmessage", req.Msg);
+    if (req.Msg) socket.broadcast.to(req.RoomName).emit("newmessage", req.Msg);
 
     /*update This Room Last msg to live users*/
     io.emit("roomlastmessage", {
