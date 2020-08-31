@@ -43,29 +43,29 @@ setTimeout( async () => {
     await Room.create({
         Roomname: "General",
         IconPath: "Rooms/Icons/Room.png",
-        LastSender: "",
-        LastMessage: "",
+        LastSender: "Admin",
+        LastMessage: "None"
       });
 
       await Room.create({
         Roomname: "Fat Mamas",
         IconPath: "Rooms/Icons/Room.png",
-        LastSender: "",
-        LastMessage: "",
+        LastSender: "Admin",
+        LastMessage: "None"
       });
 
       await Room.create({
         Roomname: "Memes",
         IconPath: "Rooms/Icons/Room.png",
-        LastSender: "",
-        LastMessage: "",
+        LastSender: "Admin",
+        LastMessage: "None"
       });
 
       await Room.create({
         Roomname: "Retarted People",
         IconPath: "Rooms/Icons/Room.png",
-        LastSender: "",
-        LastMessage: "",
+        LastSender: "Admin",
+        LastMessage: "None"
       });
   }
 
