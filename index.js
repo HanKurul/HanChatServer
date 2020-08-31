@@ -38,13 +38,6 @@ io.on("connect", (socket) => {
     callback({ data, error }); 
   });
 
-   /* User Entered a new Room */
-   socket.on("LeaveRoom", async (req, callback) => {
-    /*Sent All Old messages to Client*/
-  
-    /*Regires Users socked  to a room*/
-    
-  });
 
   /* User Entered a new Room */
   socket.on("EnterRoom", async (req, callback) => {
