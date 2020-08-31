@@ -6,81 +6,85 @@ const corse = require("cors");
 const PORT = process.env.PORT || 5000;
 const router = express.Router();
 
-router.get('', (reg,res) => {
-
-    res.send('Server is Online');
+router.get("", (reg, res) => {
+  res.send("Server is Online");
 });
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const { RegisterUser,LoginUser} = require('./Users.js');
-
+const { RegisterUser, LoginUser } = require("./Users/Users.js");
+const {
+  SentRoomMessages,
+  RoomSideBarInfo,
+  SaveMessageToRoom,
+} = require("./Rooms/Rooms.js");
 
 app.use(router);
-app.use(corse())
-server.listen(PORT, () => {console.log('server is listening ' + PORT)});
-
+app.use(corse());
+server.listen(PORT, () => {
+  console.log("server is listening " + PORT);
+});
 
 /* Client Side Socket is the parameter */
-io.on('connect', (socket) => {
+io.on("connect", (socket) => {
+  console.log("A new Client Connected");
+
+   // https://socket.io/docs/emit-cheatsheet/;
+
+  socket.on("RoomBasicInfos", async(callback) => {
+    const { data, error } = await RoomSideBarInfo();
+    callback({ data, error }); 
+  });
+
+  /* User Entered a new Room */
+  socket.on("EnterRoom", async (req, callback) => {
+    /*Sent All Old messages to Client*/
+    const { data, error } = await SentRoomMessages(req);
     
-    console.log("A new Client Connected")
+    /*Call Front end Callback*/
+    callback({ data, error });
 
-    socket.on('join', ({ name }, callback) => {
-        // /* add user to the*/
-        // const { error, user } = addUser({ id: socket.id, name });
+    /*Regires Users socked  to a room*/
+    socket.join(req.RoomId);
 
-        // if (error) return callback(error);
-
-        // /* We will Have 1 room */
-        // socket.join("GlobalRoom");
-
-        // /* Send Welcome Message To Joining User*/
-        // socket.emit('message', { user: 'admin', text: `Welcome, Mr/Ms ${user.name}` });
-
-        // /* Send To all User About Joining User*/
-        // socket.broadcast.to("GlobalRoom").emit('message', { user: 'admin', text: `${user.name} has joined!` });
-
-        // /* Send Information of All Users*/
-        // io.to("GlobalRoom").emit('onlineusers', { users: getUsersInRoom() });
-
-        callback();
+    /*Inform room's occupants about newly joined users*/
+    socket.broadcast.to(req.RoomId).emit("newmessage", {
+      Sender: "admin",
+      Message: `${req.UserName} has joined!`,
     });
+  });
 
-    socket.on('sendMessage', (message, callback) => {
-        // const user = getUser(socket.id);
-  
-        // io.to("GlobalRoom").emit('message', message);
-         
-        callback();
+  socket.on("SendMessageToRoom", async (req, callback) => {
+    /*Save the new message to our db*/
+    /*Also will update the rooms last message*/
+    const { data, error } = await SaveMessageToRoom(req);
+
+    /*Call Front end Callback*/
+    callback({ data, error });
+
+    /*Send new message to room's occupants*/
+    if (req.Msg) socket.broadcast.to(req.RoomId).emit("newmessage", req.Msg);
+
+    /*update This Room Last msg to live users*/
+    io.emit("roomlastmessage", {
+      _id: req.RoomId,
+      LastMessage: req.Msg.Message,
+      LastSender: req.Msg.Sender,
     });
+  });
 
-    socket.on('RegisterMsg', (message, callback) => {
-       
-       RegisterUser(message).then(function({ error, success }) 
-       {
-            callback({ error, success });
-       });
-     
-    });
+  socket.on("RegisterMsg", async(message, callback) => {
+    const { success, error } = await RegisterUser(message);
+    callback({ error, success });  
+  });
 
-    socket.on('LoginMsg', (message, callback) => {
-        LoginUser(message).then(function({ error, success, ProfilePic }) 
-        {
-             callback({ error, success , ProfilePic});
-        });
-    });
+  socket.on("LoginMsg", async(message, callback) => {
+    const { error, success, ProfilePic } = await LoginUser(message);
+    callback({ error, success, ProfilePic }); 
+  });
 
-
-    socket.on("disconnect", () => {
-        // const user = removeUser(socket.id);
-
-        // if (user) {
-        //     io.to("GlobalRoom").emit('message', { user: 'Admin', text: `${user.name} has left.` });
-        //     io.to("GlobalRoom").emit('roomData', { users: getUsersInRoom() });
-        // }
-    })
-      
-})
+  // socket.on("join", () => {});
+  // socket.on("disconnect", () => {});
+});
