@@ -38,6 +38,14 @@ io.on("connect", (socket) => {
     callback({ data, error }); 
   });
 
+   /* User Entered a new Room */
+   socket.on("LeaveRoom", async (req, callback) => {
+    /*Sent All Old messages to Client*/
+  
+    /*Regires Users socked  to a room*/
+    
+  });
+
   /* User Entered a new Room */
   socket.on("EnterRoom", async (req, callback) => {
     /*Sent All Old messages to Client*/
@@ -45,6 +53,9 @@ io.on("connect", (socket) => {
     
     /*Call Front end Callback*/
     callback({ data, error });
+
+    if (req.OldRoomName)
+      socket.leave(req.OldRoomName);
 
     /*Regires Users socked  to a room*/
     socket.join(req.RoomName);
