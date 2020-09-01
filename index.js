@@ -57,6 +57,7 @@ io.on("connect", (socket) => {
     socket.broadcast.to(req.RoomName).emit("newmessage", {
       Sender: "admin",
       Message: `${req.UserName} has joined!`,
+      createdAt: new Date()
     });
   });
 

@@ -51,6 +51,7 @@ async function SentRoomMessages(req) {
     const amessage = {
       Sender: message.dataValues.Sender,
       Message: message.dataValues.Text,
+      createdAt:  message.dataValues.createdAt
     };
 
     PickedMessages.push(amessage);

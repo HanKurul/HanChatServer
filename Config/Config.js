@@ -27,7 +27,12 @@ Room.init({
 Message.init({
     RoomID: DataTypes.STRING,
     Text: DataTypes.STRING,
-    Sender: DataTypes.STRING
+    Sender: DataTypes.STRING,
+    createdAt:{
+      type: 'TIMESTAMP',
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      allowNull: false
+  },
 }, { sequelize, timestamps: true, modelName: 'Messages' });
 
 /* I do this so when we have no local database it will init*/
