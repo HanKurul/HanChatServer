@@ -1,3 +1,4 @@
+/* By Han Kurul*/
 const { Sequelize, Model, DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize("database", "username", "password", {
