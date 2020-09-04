@@ -15,10 +15,7 @@ node js + socket io for network communication
 - Its Inits Database at startup, no need for prep,
 
 
-# How To Run
-
-Just Run by simple double click and
-It will clean all projects in folders and subfolders in Working Directory of .exe
+# Test Your Self on https://darkychat.netlify.app/
 ![](https://i.gyazo.com/c6bcbe35dbc0f78f2faf4b8778e37721.png)
 
 
