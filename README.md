@@ -14,8 +14,9 @@ node js + socket io for network communication
 - Stores/Delivers old messages, delivers all messages when new user joins.
 - Its Inits Database at startup, no need for prep,
 
-
-# Test Your Self on https://darkychat.netlify.app/
+# Live Site: https://darkychat.netlify.app/
+Client: Runs on netlify
+Server: Runs on Heroku
 ![](https://i.gyazo.com/c6bcbe35dbc0f78f2faf4b8778e37721.png)
 
 
